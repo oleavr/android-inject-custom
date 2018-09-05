@@ -1,0 +1,7 @@
+EXAMPLE_AGENT_1.0 {
+  global:
+    example_agent_main;
+
+  local:
+    *;
+};
