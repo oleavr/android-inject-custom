@@ -1,14 +1,20 @@
-HOST_TRIPLET_PREFIX := arm-linux-androideabi-
+host_arch := arm
+host_compiler_triplet := armv7a-linux-androideabi18-
+host_tool_triplet := arm-linux-androideabi-
+host_cflags := -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16 -mthumb
+host_ldflags := -Wl,--fix-cortex-a8
 
-CC := $(HOST_TRIPLET_PREFIX)clang
-CFLAGS := -DANDROID -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16 -mthumb -Os -Wall -fPIC -ffunction-sections -fdata-sections
-LDFLAGS := -fuse-ld=gold -Wl,--fix-cortex-a8 -Wl,--icf=safe -Wl,--gc-sections -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now
-STRIP := $(HOST_TRIPLET_PREFIX)strip --strip-all
+ndk_toolchain_bindir := $(ANDROID_NDK_ROOT)/toolchains/llvm/prebuilt/$(shell uname -s | tr '[A-Z]' '[a-z]')-$(shell uname -m)/bin
 
-frida_version := 12.1.2
-frida_os_arch := android-arm
-FRIDA_CORE_DEVKIT_URL := https://github.com/frida/frida/releases/download/$(frida_version)/frida-core-devkit-$(frida_version)-$(frida_os_arch).tar.xz
-FRIDA_GUM_DEVKIT_URL := https://github.com/frida/frida/releases/download/$(frida_version)/frida-gum-devkit-$(frida_version)-$(frida_os_arch).tar.xz
+CC := $(ndk_toolchain_bindir)/$(host_compiler_triplet)clang
+CFLAGS := -DANDROID -Os -Wall -fPIC -ffunction-sections -fdata-sections $(host_cflags)
+LDFLAGS := -fuse-ld=gold -Wl,--icf=all -Wl,--gc-sections -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now $(host_ldflags)
+STRIP := $(ndk_toolchain_bindir)/$(host_tool_triplet)strip --strip-all
+
+frida_version := 12.6.16
+frida_os_arch := android-$(host_arch)
+frida_core_devkit_url := https://github.com/frida/frida/releases/download/$(frida_version)/frida-core-devkit-$(frida_version)-$(frida_os_arch).tar.xz
+frida_gum_devkit_url := https://github.com/frida/frida/releases/download/$(frida_version)/frida-gum-devkit-$(frida_version)-$(frida_os_arch).tar.xz
 
 all: bin/inject bin/agent.so bin/victim
 
@@ -34,13 +40,13 @@ bin/victim: victim.c
 ext/frida-core/.stamp:
 	@mkdir -p $(@D)
 	@rm -f $(@D)/*
-	curl -Ls $(FRIDA_CORE_DEVKIT_URL) | xz -d | tar -C $(@D) -xf -
+	curl -Ls $(frida_core_devkit_url) | xz -d | tar -C $(@D) -xf -
 	@touch $@
 
 ext/frida-gum/.stamp:
 	@mkdir -p $(@D)
 	@rm -f $(@D)/*
-	curl -Ls $(FRIDA_GUM_DEVKIT_URL) | xz -d | tar -C $(@D) -xf -
+	curl -Ls $(frida_gum_devkit_url) | xz -d | tar -C $(@D) -xf -
 	@touch $@
 
 .PHONY: all deploy
