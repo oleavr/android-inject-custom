@@ -14,19 +14,12 @@ easily portable to all other OSes supported by Frida.
 
 # Prerequisites
 
-- Android NDK r17b
+- Android NDK r21
 - Rooted Android device
 
 # Preparing the build environment
 
-```sh
-$ $ANDROID_NDK_ROOT/build/tools/make_standalone_toolchain.py \
-  --arch arm \
-  --api 14 \
-  --stl=libc++ \
-  --install-dir=./ext/toolchain
-$ export PATH=$(pwd)/ext/toolchain/bin:$PATH
-```
+Point `$ANDROID_NDK_ROOT` to your NDK path.
 
 # Running
 
