@@ -1,8 +1,8 @@
-host_arch := arm
-host_compiler_triplet := armv7a-linux-androideabi18-
-host_tool_triplet := arm-linux-androideabi-
-host_cflags := -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16 -mthumb
-host_ldflags := -Wl,--fix-cortex-a8
+host_arch := arm64
+host_compiler_triplet := aarch64-linux-android21-
+host_tool_triplet := aarch64-linux-android-
+host_cflags :=
+host_ldflags := -landroid
 
 ndk_toolchain_bindir := $(ANDROID_NDK_ROOT)/toolchains/llvm/prebuilt/$(shell uname -s | tr '[A-Z]' '[a-z]')-$(shell uname -m)/bin
 
@@ -11,7 +11,7 @@ CFLAGS := -DANDROID -Os -Wall -fPIC -ffunction-sections -fdata-sections $(host_c
 LDFLAGS := -fuse-ld=gold -Wl,--icf=all -Wl,--gc-sections -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now $(host_ldflags)
 STRIP := $(ndk_toolchain_bindir)/$(host_tool_triplet)strip --strip-all
 
-frida_version := 12.6.17
+frida_version := 12.9.4
 frida_os_arch := android-$(host_arch)
 frida_core_devkit_url := https://github.com/frida/frida/releases/download/$(frida_version)/frida-core-devkit-$(frida_version)-$(frida_os_arch).tar.xz
 frida_gum_devkit_url := https://github.com/frida/frida/releases/download/$(frida_version)/frida-gum-devkit-$(frida_version)-$(frida_os_arch).tar.xz
